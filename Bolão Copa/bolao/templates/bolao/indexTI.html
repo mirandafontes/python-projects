@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<!--
+	Astral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Bolão Copa 2018</title>
+		<link rel="icon" href="static/flags/copa.png">
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		{% load staticfiles %}
+		<link rel="stylesheet" href="{% static 'index/css/main.css'%}" />
+		<!--<noscript><link rel="stylesheet" href="{% static 'index/css/noscript.css' %}" /></noscript>-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Wrapper-->
+			<div id="wrapper">
+
+				<!-- Nav -->
+					<nav id="nav">
+						<a href="#me" class="icon fa-home active"><span>Home</span></a>
+						<a href="#work" class="icon fa-folder"><span>Partidas</span></a>
+						<a href="#work2" class="icon fa-paperclip"><span>Apostas</span></a>
+						<a href="#jogadores" class="icon fa-user"><span>Ranking</span></a>
+						<a href="#apostar" class="fa-google-wallet"><span>Apostar</span></a>
+						<a href="#sair" class="icon fa-power-off"><span>Logout</span></a>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Me -->
+							<article id="me" class="panel">
+								<header>
+									<h1><p>Bem-Vindo: {{ jogador.nome }}</p>
+										Créditos: R$ {{ jogador.creditos }}</h1>
+									<p></p>
+								</header>
+							</article>
+							
+							<article id="work" class="panel">
+								<header>
+									<h1><center>Partidas</center></h1>
+									<p></p>
+									<h2><center>Todas as partidas cadastradas</center></h2>
+								</header>
+								<p>
+									{% for x in partidas %}
+									
+										<h2><center> <img style="vertical-align: middle; border: 1px solid black; border-radius: 2px; box-shadow: 1px 1px 1px 1px" src="{{ x.pais_1.bandeira.url}}" height="50px" width="80px"/> {{x.pais_1}} x {{x.pais_2}} <img style="vertical-align: middle; border: 1px solid black; border-radius: 2px; box-shadow: 1px 1px 1px 1px" src="{{ x.pais_2.bandeira.url}}" height="50px" width="80px"/></center></h2>
+										<h3><center>{{x.estadio}}</center></h3>
+
+										{% if x.status == -2 %}
+											<h3><center>{{ x.placar_1 }} X {{ x.placar_2 }}</center></h3>									
+											<h4><center>Partida Concluída</center></h4>
+										{% endif %}
+										
+										<p><h3><center>Data: {{ x.data }}</center></h3> </p>
+									{% endfor %}
+								</p>
+								
+							</article>	
+							
+							<article id="work2" class="panel">
+								<header>
+									<h1><center>Apostas</center></h1>
+									<p> </p>
+									<h2><center>Apostas realizadas</center></h2>
+								</header>
+								<p>
+									{% for a in apostas %}
+										<h3><center>{{a.partida}}</center></h3>
+										<h3><center>{{ a.placar_1 }} x {{ a.placar_2 }}</center></h3>
+										<p></p>
+									{% endfor %}
+								</p>
+							</article>
+							
+							<article id="jogadores" class="panel">
+								<header>
+									<h1><center>Jogadores</center></h1>
+									<p> </p>
+								</header>
+								<p>
+									{% for j in jogadores %}
+										<h2>{{j}} - R$: {{ j.creditos }}</h2> <br>
+										<h3> </h3>
+									{% endfor %}
+								</p>
+							</article>
+							
+							<article id="apostar" class="panel">
+								<header>
+									<div>
+										<h1><center>Apostar</center></h1>
+										<p> </p>
+										<h3>{{erro}}</h3>
+										<p> </p>
+									</div>
+
+									<form name="form1" method="get" >
+									
+										{% csrf_token %} 
+										
+										<h3><center>Partidas:</center></h3>
+										
+										<select name="apostado">
+											{% for i in partidas %}
+												{% if i.status >= -1 %}
+													<option value="{{i}}">{{i}} {{i.data}}</option>
+												{% endif %}
+											{% endfor %}
+										</select>
+										
+										<p> </p>
+										
+										<div>
+										<center>
+											<h3>Placar:</h3>
+											<input type="number" name="placar1" id="placar1" placeholder="Primeiro" min="0" required>
+											<p> </p>
+											<input type="number" name="placar2" id="placar2" placeholder="Segundo" min="0" required>
+										</center>
+										</div>
+										
+										<!--<input type="text" name="nome" id="nome" placeholder="Username" required> -->
+										<p> </p>
+										<center>
+											<button type="submit" name="jogador" value="{{jogador}}" id="jogadorSubmit">Apostar</button>
+										</center>
+										
+									</form>
+									
+								</header>
+							</article>
+							
+							<article id="sair" class="panel">
+								<header>
+									<h1><center>Logout</center></h1>
+									<p> </p>
+								</header>
+
+								<div align="right">
+									<form action="/sair.html" method="get">
+										<button type="submit" value="submit" >Logout</button>
+									</form>
+								</div>
+
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<div id="footer">
+						<ul class="copyright">
+							<li>&copy; Bolão.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						</ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+		{% load staticfiles %}
+			<script src="{% static 'index/js/jquery.min.js' %}"></script>
+			<script src="{% static 'index/js/skel.min.js' %}"></script>
+			<script src="{% static 'index/js/skel-viewport.min.js' %}"></script>
+			<script src="{% static 'index/js/util.js' %}"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="{% static 'index/js/main.js' %}"></script>
+
+	</body>
+</html>
